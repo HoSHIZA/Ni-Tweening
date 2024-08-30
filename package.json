@@ -1,0 +1,27 @@
+﻿{
+    "name": "com.ni-games.tweening",
+    "version": "1.0.0",
+    "displayName": "Ni Tween",
+    "description": "A tweener and sequencer for Unity.",
+    "unity": "2022.2",
+    "documentationUrl": "",
+    "dependencies": {
+        "com.ni-games.essentials" : "1.0.0",
+        "com.ni-games.scheduling" : "1.0.0",
+        "com.unity.burst" : "1.6.0",
+        "com.unity.collections" : "1.5.1",
+        "com.unity.mathematics" : "1.0.1"
+    },
+    "optionalDependencies": {},
+    "keywords": [
+        "NiGames",
+        "Tweening",
+        "NiTween",
+        "Animation"
+    ],
+    "author": {
+        "name": "HoSHIZA",
+        "email": "hoshiza78@gmail.com",
+        "url": "https://github.com/HoSHIZA"
+    }
+}
