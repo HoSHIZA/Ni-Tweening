@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using NiGames.Essentials;
+using NiGames.Essentials.Easing;
 using NiGames.Essentials.Unsafe;
-using UnityEngine;
 
 namespace NiGames.Tweening
 {
@@ -55,14 +55,12 @@ namespace NiGames.Tweening
     }
     
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct NiTweenManagedData
+    public struct NiTweenManagedData
     {
         public bool IsCallbackRunning;
         public bool CancelOnError;
-        
-        public Func<float, float> EaseFunction;
-        public delegate*<float, float> EaseFunctionPtr;
-        public AnimationCurve EaseAnimationCurve;
+
+        public EaseData Ease;
         
         public object FromGetter;
         public object ToGetter;
@@ -116,7 +114,7 @@ namespace NiGames.Tweening
         
         public static readonly NiTweenManagedData Default = new()
         {
-            EaseFunction = Essentials.Easing.EaseFunction.Linear,
+            Ease = EaseData.Default,
             CancelOnError = true,
         };
     }

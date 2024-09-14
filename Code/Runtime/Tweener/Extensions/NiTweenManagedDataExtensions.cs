@@ -1,20 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
-using NiGames.Essentials.Easing;
 
 namespace NiGames.Tweening
 {
     public static class NiTweenManagedDataExtensions
     {
-        [MethodImpl(256)]
-        public static unsafe float Ease(this NiTweenManagedData managedData, float t)
-        {
-            return managedData.EaseFunction?.Invoke(t) ?? (
-                managedData.EaseAnimationCurve?.Evaluate(t) ?? (
-                    managedData.EaseFunctionPtr != null 
-                        ? managedData.EaseFunctionPtr(t) 
-                        : EaseFunction.Linear(t)));
-        }
-        
         [MethodImpl(256)]
         public static void InvokeStart<T, TOptions, TAdapter>(this NiTweenManagedData managedData, ref NiTweenData<T, TOptions> data) 
             where T : unmanaged
@@ -23,7 +12,7 @@ namespace NiGames.Tweening
         {
             managedData
                 .InvokeValueUpdate(default(TAdapter)
-                .Evaluate(ref data.From, ref data.To, ref data.Options, managedData.Ease(0f)));
+                .Evaluate(ref data.From, ref data.To, ref data.Options, managedData.Ease.Evaluate(0f)));
         }
 
         [MethodImpl(256)]
@@ -34,7 +23,7 @@ namespace NiGames.Tweening
         {
             managedData
                 .InvokeValueUpdate(default(TAdapter)
-                .Evaluate(ref data.From, ref data.To, ref data.Options, managedData.Ease(1f)));
+                .Evaluate(ref data.From, ref data.To, ref data.Options, managedData.Ease.Evaluate(1f)));
         }
         
         [MethodImpl(256)]
@@ -45,7 +34,7 @@ namespace NiGames.Tweening
         {
             managedData
                 .InvokeValueUpdate(default(TAdapter)
-                .Evaluate(ref data.From, ref data.To, ref data.Options, managedData.Ease(t)));
+                .Evaluate(ref data.From, ref data.To, ref data.Options, managedData.Ease.Evaluate(t)));
         }
     }
 }

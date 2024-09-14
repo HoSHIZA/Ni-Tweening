@@ -2,10 +2,6 @@
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 namespace NiGames.Tweening
 {
     public static partial class NiTweenBuilderExtensions
@@ -69,7 +65,7 @@ namespace NiGames.Tweening
 #if UNITY_EDITOR
             return builder.OnUpdate(v =>
             {
-                EditorApplication.QueuePlayerLoopUpdate();
+                UnityEditor.EditorApplication.QueuePlayerLoopUpdate();
                 UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
             });
 #endif

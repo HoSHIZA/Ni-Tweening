@@ -3,11 +3,40 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using NiGames.Essentials;
 using NiGames.Essentials.Easing;
+using NiGames.Essentials.Pooling.Buffer;
 using NiGames.Scheduling;
 using UnityEngine;
 
 namespace NiGames.Tweening
 {
+    internal sealed class NiTweenBuilderBuffer<T, TOptions> : AbstractPooledBuffer<NiTweenBuilderBuffer<T, TOptions>>
+        where T : unmanaged
+        where TOptions : unmanaged, ITweenOptions
+    {
+        public IScheduler Scheduler;
+        
+        public NiTweenData<T, TOptions> Data;
+        public NiTweenManagedData ManagedData;
+        
+        public bool ScheduleOnBind;
+        public bool BindOnSchedule;
+        
+        public bool Preserve;
+        
+        protected override void Reset()
+        {
+            Scheduler = NiGames.Scheduling.Scheduler.Default;
+            
+            Data = NiTweenData<T, TOptions>.Default;
+            ManagedData = NiTweenManagedData.Default;
+            
+            ScheduleOnBind = true;
+            BindOnSchedule = true;
+            
+            Preserve = false;
+        }
+    }
+    
     [PublicAPI]
     public struct NiTweenBuilder<T, TOptions, TAdapter> : IDisposable
         where T : unmanaged
@@ -127,8 +156,7 @@ namespace NiGames.Tweening
         {
             ValidateBuffer();
 
-            Buffer.ManagedData.EaseFunction = EaseUtility.GetFunction(ease);
-            Buffer.ManagedData.EaseAnimationCurve = null;
+            Buffer.ManagedData.Ease = ease;
             
             return this;
         }
@@ -141,8 +169,20 @@ namespace NiGames.Tweening
         {
             ValidateBuffer();
             
-            Buffer.ManagedData.EaseFunction = EaseUtility.GetFunction(type, power);
-            Buffer.ManagedData.EaseAnimationCurve = null;
+            Buffer.ManagedData.Ease = EaseUtility.GetFunction(type, power);
+            
+            return this;
+        }
+        
+        /// <summary>
+        /// Sets <c>Ease</c> with <see cref="EaseData"/>.
+        /// </summary>
+        [MethodImpl(256)]
+        public readonly NiTweenBuilder<T, TOptions, TAdapter> WithEase(EaseData ease)
+        {
+            ValidateBuffer();
+            
+            Buffer.ManagedData.Ease = ease;
             
             return this;
         }
@@ -155,8 +195,7 @@ namespace NiGames.Tweening
         {
             ValidateBuffer();
 
-            Buffer.ManagedData.EaseFunction = null;
-            Buffer.ManagedData.EaseAnimationCurve = curve;
+            Buffer.ManagedData.Ease = curve;
             
             return this;
         }
@@ -169,22 +208,7 @@ namespace NiGames.Tweening
         {
             ValidateBuffer();
             
-            Buffer.ManagedData.EaseFunction = easeFunction;
-            Buffer.ManagedData.EaseAnimationCurve = null;
-            
-            return this;
-        }
-        
-        /// <summary>
-        /// Sets <c>Ease</c> using the .
-        /// </summary>
-        [MethodImpl(256)]
-        public readonly unsafe NiTweenBuilder<T, TOptions, TAdapter> WithEase(delegate*<float, float> ptr)
-        {
-            ValidateBuffer();
-
-            Buffer.ManagedData.EaseFunctionPtr = ptr;
-            Buffer.ManagedData.EaseAnimationCurve = null;
+            Buffer.ManagedData.Ease = easeFunction;
             
             return this;
         }
@@ -217,7 +241,7 @@ namespace NiGames.Tweening
         {
             ValidateBuffer();
             
-            Buffer.Data.Core.LoopCount = loops < 0 ? -1 : loops == 0 ? 1 : loops;
+            Buffer.Data.Core.LoopCount = Math.Max(0, loops);
             Buffer.Data.Core.LoopType = loopType;
             Buffer.Data.Core.AffectLoopsOnDuration = affectOnDuration;
             
@@ -611,7 +635,7 @@ namespace NiGames.Tweening
         {
             if (Buffer == null || Buffer.Revision != Revision)
             {
-                throw new InvalidOperationException("[NiTween] NiTweenBuilder is not initialized before execution, or binding has already been done. Use Preserve() to reuse the builder.");
+                throw new InvalidOperationException($"[NiTween] NiTweenBuilder<{typeof(T).Name}, {typeof(TOptions).Name}, {typeof(TAdapter).Name}> is not initialized before execution, or binding has already been done. Use Preserve() to reuse the builder.");
             }
         }
     }

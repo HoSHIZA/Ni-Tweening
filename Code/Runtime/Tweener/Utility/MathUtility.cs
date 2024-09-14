@@ -15,15 +15,6 @@ namespace NiGames.Tweening.Utility
         }
         
         /// <summary>
-        /// Get the nearest value in a range using a normalized parameter t.
-        /// </summary>
-        [MethodImpl(256)]
-        public static float GetNearestInRange(float min, float max, float t)
-        {
-            return Mathf.Lerp(min, max, Mathf.Clamp01(t));
-        }
-
-        /// <summary>
         /// Get the nearest index in an array using a normalized parameter t
         /// </summary>
         [MethodImpl(256)]
