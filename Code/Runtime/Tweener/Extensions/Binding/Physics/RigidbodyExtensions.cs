@@ -19,7 +19,11 @@ namespace NiGames.Tweening
 
             return builder.BindWithState(rb, static (v, target) =>
             {
+#if UNITY_6000
+                target.linearVelocity = v;
+#else  
                 target.velocity = v;
+#endif
             });
         }
         
@@ -35,9 +39,15 @@ namespace NiGames.Tweening
 
             return builder.BindWithState(rb, static (v, target) =>
             {
+#if UNITY_6000
+                var cache = target.linearVelocity;
+                cache.x = v;
+                target.linearVelocity = cache;
+#else  
                 var cache = target.velocity;
                 cache.x = v;
                 target.velocity = cache;
+#endif
             });
         }
         
@@ -53,9 +63,15 @@ namespace NiGames.Tweening
 
             return builder.BindWithState(rb, static (v, target) =>
             {
+#if UNITY_6000
+                var cache = target.linearVelocity;
+                cache.y = v;
+                target.linearVelocity = cache;
+#else  
                 var cache = target.velocity;
                 cache.y = v;
                 target.velocity = cache;
+#endif
             });
         }
         
@@ -71,9 +87,15 @@ namespace NiGames.Tweening
 
             return builder.BindWithState(rb, static (v, target) =>
             {
+#if UNITY_6000
+                var cache = target.linearVelocity;
+                cache.z = v;
+                target.linearVelocity = cache;
+#else  
                 var cache = target.velocity;
                 cache.z = v;
                 target.velocity = cache;
+#endif
             });
         }
 
